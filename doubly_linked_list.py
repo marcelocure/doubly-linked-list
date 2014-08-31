@@ -30,6 +30,56 @@ class DoublyLinkedListIndex(object):
 	end = None
 	aux = None
 
+	def sort_list(self):
+		self.aux = self.begin
+		changed = False
+		while self.aux is not None:
+			if self.aux.person.name == self.begin.person.name:
+				if self.begin.next.person.name < self.begin.person.name:
+					changed = True
+					person = self.begin.person
+					self.begin.person = self.begin.next.person
+					self.begin.next.person = person
+
+					main = self.begin.main
+					self.begin.main = self.begin.next.main
+					self.begin.next.main = main
+			elif self.aux.person.name == self.end.person.name:
+				if self.end.prev.person.name > self.end.person.name:
+					changed = True
+					person = self.end.person
+					self.end.person = self.end.prev.person
+					self.end.prev.person = person
+
+					main = self.end.main
+					self.end.main = self.end.prev.main
+					self.end.prev.main = main
+			else:
+				if self.aux.prev.person.name > self.aux.person.name:
+					changed = True
+					person = self.aux.prev.person
+					self.aux.prev.person = self.aux.person
+					self.aux.person = person
+
+					main = self.aux.prev.main
+					self.aux.prev.main = self.aux.main
+					self.aux.main = main
+					
+				if self.aux.person.name > self.aux.next.person.name:
+					changed = True
+					person = self.aux.person
+					self.aux.person = self.aux.next.person
+					self.aux.next.person = person
+
+					main = self.aux.main
+					self.aux.main = self.aux.next.main
+					self.aux.next.main = main
+					
+			if self.aux is not None:
+				self.aux = self.aux.next
+		if changed:
+			self.sort_list()
+
 	def insert_on_begin(self, person, main):
 		new = ListIndex(person=person)
 		if self.begin is None:
@@ -66,9 +116,7 @@ class DoublyLinkedListIndex(object):
 		else:
 			self.aux = self.begin
 			while self.aux is not None:
-				#print 'prev: '+self.aux.main.prev.person
 				print self.aux.main.person
-				#print 'next: '+self.aux.main.next.person
 				self.aux = self.aux.next
 
 	def search(self, person_name):
@@ -92,6 +140,8 @@ class DoublyLinkedListIndex(object):
 					elif self.aux.person.name == person_name:
 						found = True
 						self.aux = None
+					if found:
+						print '{0} comparisons made'.format(comparisons)
 
 
 
@@ -199,6 +249,7 @@ class DoublyLinkedList(object):
 				if self.aux.person.name[:1] in ['e','j','o','t','z']:
 					self.index.insert_on_begin(self.aux.person, self.aux)
 				self.aux = self.aux.next
+			self.index.sort_list()
 
 	def remove(self, name):
 		if self.begin is None:
