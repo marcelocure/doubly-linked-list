@@ -16,14 +16,22 @@ class List(object):
 	person = None
 
 
+class ListIndex(object):
+	def __init__(self, person=None):
+		self.person = person
+	prev = None
+	next = None
+	person = None
+	main = None
+
+
 class DoublyLinkedListIndex(object):
 	begin = None
 	end = None
 	aux = None
-	main = None
 
-	def insert_on_begin(self, person):
-		new = List(person=person)
+	def insert_on_begin(self, person, main):
+		new = ListIndex(person=person)
 		if self.begin is None:
 			self.begin = new
 			self.end = new
@@ -34,9 +42,10 @@ class DoublyLinkedListIndex(object):
 			self.begin.prev = new
 			new.prev = None
 			self.begin = new
+		self.begin.main = main
 
-	def insert_on_end(self, person):
-		new = List(person=person)
+	def insert_on_end(self, person, main):
+		new = ListIndex(person=person)
 		if self.begin is None:
 			print 'empty'
 			self.begin = new
@@ -48,6 +57,7 @@ class DoublyLinkedListIndex(object):
 			new.prev = self.end
 			new.next = None
 			self.end = new
+		self.begin.main = main
 
 
 	def show_list(self):
@@ -56,7 +66,9 @@ class DoublyLinkedListIndex(object):
 		else:
 			self.aux = self.begin
 			while self.aux is not None:
-				print self.aux.person
+				print self.aux.main.prev.person
+				print self.aux.main.person
+				print self.aux.main.next.person
 				self.aux = self.aux.next
 
 
@@ -79,7 +91,8 @@ class DoublyLinkedList(object):
 			self.begin.prev = new
 			new.prev = None
 			self.begin = new
-		self.index.insert_on_begin(self.begin.person)
+		if new.person.name[:1] in ['e','j','o','t','z']:
+			self.index.insert_on_begin(self.begin.person, self.begin)
 
 	def insert_on_end(self, person):
 		new = List(person=person)
@@ -94,8 +107,8 @@ class DoublyLinkedList(object):
 			new.prev = self.end
 			new.next = None
 			self.end = new
-		self.index.insert_on_begin(self.end.person)
-
+		if new.person.name[:1] in ['e','j','o','t','z']:
+			self.index.insert_on_begin(self.end.person, self.end)
 
 	def show_list(self):
 		if self.begin is None:
