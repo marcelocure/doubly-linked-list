@@ -17,8 +17,9 @@ class List(object):
 
 
 class ListIndex(object):
-	def __init__(self, person=None):
+	def __init__(self, person=None, main=None):
 		self.person = person
+		self.main = main
 	prev = None
 	next = None
 	person = None
@@ -30,7 +31,7 @@ class DoublyLinkedListIndex(object):
 	end = None
 	aux = None
 
-	def sort_list(self):
+	def sort_index(self):
 		self.aux = self.begin
 		changed = False
 		while self.aux is not None:
@@ -78,7 +79,7 @@ class DoublyLinkedListIndex(object):
 			if self.aux is not None:
 				self.aux = self.aux.next
 		if changed:
-			self.sort_list()
+			self.sort_index()
 
 	def remove(self, name):
 		if self.begin is None:
@@ -119,7 +120,7 @@ class DoublyLinkedListIndex(object):
 				self.aux = self.aux.next
 		return contains
 
-	def insert_on_begin(self, person, main):
+	def insert(self, person, main):
 		if not self.contains_on_index(person):
 			new = ListIndex(person=person)
 			if self.begin is None:
@@ -133,7 +134,6 @@ class DoublyLinkedListIndex(object):
 				new.prev = None
 				self.begin = new
 			self.begin.main = main
-
 	def show_list(self):
 		if self.begin is None:
 			print 'empty list'
@@ -242,15 +242,16 @@ class DoublyLinkedList(object):
 		print '####INDEX####'
 
 	def update_index(self):
+		self.index = DoublyLinkedListIndex()
 		if self.begin is None:
 			print 'empty list'
 		else:
 			self.aux = self.begin
 			while self.aux is not None:
 				if self.aux.person.name[:1] in ['e','j','o','t','z']:
-					self.index.insert_on_begin(self.aux.person, self.aux)
+					self.index.insert(self.aux.person, self.aux)
 				self.aux = self.aux.next
-			self.index.sort_list()
+			self.index.sort_index()
 
 	def remove(self, name):
 		if self.begin is None:
@@ -361,6 +362,7 @@ def main():
 			name = raw_input("Please enter the name to search: ")
 			dll.search(name)
 		dll.sort_list()
+		dll.update_index()
 	print 'Exit'
 
 if __name__ == '__main__':
