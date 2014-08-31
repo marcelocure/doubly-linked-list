@@ -80,35 +80,48 @@ class DoublyLinkedListIndex(object):
 		if changed:
 			self.sort_list()
 
+	def contains_on_index(self, person):
+		self.aux = self.begin
+		contains = False
+		while self.aux is not None:
+			if self.aux.person.name == person.name:
+				contains = True
+				self.aux = None
+			else:
+				self.aux = self.aux.next
+		return contains
+
 	def insert_on_begin(self, person, main):
-		new = ListIndex(person=person)
-		if self.begin is None:
-			self.begin = new
-			self.end = new
-			new.next = None
-			new.prev = None
-		else:
-			new.next = self.begin
-			self.begin.prev = new
-			new.prev = None
-			self.begin = new
-		self.begin.main = main
+
+		if not self.contains_on_index(person):
+			new = ListIndex(person=person)
+			if self.begin is None:
+				self.begin = new
+				self.end = new
+				new.next = None
+				new.prev = None
+			else:
+				new.next = self.begin
+				self.begin.prev = new
+				new.prev = None
+				self.begin = new
+			self.begin.main = main
 
 	def insert_on_end(self, person, main):
-		new = ListIndex(person=person)
-		if self.begin is None:
-			print 'empty'
-			self.begin = new
-			self.end = new
-			new.next = None
-			new.prev = None
-		else:
-			self.end.next = new
-			new.prev = self.end
-			new.next = None
-			self.end = new
-		self.begin.main = main
-
+		if not self.contains_on_index(person):
+			new = ListIndex(person=person)
+			if self.begin is None:
+				print 'empty'
+				self.begin = new
+				self.end = new
+				new.next = None
+				new.prev = None
+			else:
+				self.end.next = new
+				new.prev = self.end
+				new.next = None
+				self.end = new
+			self.begin.main = main
 
 	def show_list(self):
 		if self.begin is None:
@@ -218,7 +231,6 @@ class DoublyLinkedList(object):
 	def insert_on_end(self, person, update_index=True):
 		new = List(person=person)
 		if self.begin is None:
-			print 'empty'
 			self.begin = new
 			self.end = new
 			new.next = None
@@ -249,7 +261,6 @@ class DoublyLinkedList(object):
 		else:
 			self.aux = self.begin
 			while self.aux is not None:
-				print self.aux.person
 				if self.aux.person.name[:1] in ['e','j','o','t','z']:
 					self.index.insert_on_begin(self.aux.person, self.aux)
 				self.aux = self.aux.next
