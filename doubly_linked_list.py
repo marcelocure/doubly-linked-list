@@ -123,26 +123,30 @@ class DoublyLinkedListIndex(object):
 		self.aux = self.begin
 		found = False
 		comparisons = 0
+		print 'comparing on index'
 		while self.aux is not None:
-			if self.aux.person.name > person_name:
-				print self.aux.person.name
-				print 'bigger'
-				comparisons = comparisons + 1
+			comparisons = comparisons + 1
+			if person_name > self.aux.person.name:
+				print 'index value {0} is bigger than {1}'.format(self.aux.person.name, person_name)
 				self.aux = self.aux.next
 			else:
-				print 'lower'
-				self.aux = self.aux.main
-				while not found or self.aux is not None:
-					print self.aux.person.name
-					comparisons = comparisons + 1
-					if self.aux.person.name != person_name:
-						self.aux = self.aux.next
-					elif self.aux.person.name == person_name:
-						found = True
-						self.aux = None
-					if found:
-						print '{0} comparisons made'.format(comparisons)
+				print 'index value {0} is lower than {1}, going back one level'.format(self.aux.person.name, person_name)
+				main = self.aux.prev.main
+				self.aux = None
 
+		print 'exit index'
+		print 'searching on main list'
+		while main is not None:
+			comparisons = comparisons + 1
+			print main.person.name
+
+			if main.person.name == person_name:
+				print 'Found :)'
+				found = True
+				main = None
+			else:
+				main = main.next
+		print '{0} comparisons made'.format(comparisons)
 
 
 class DoublyLinkedList(object):
@@ -320,10 +324,11 @@ def main():
 	print '2 - Insert in the end'
 	print '3 - Remove value'
 	print '4 - List entries'
-	print '5 - find person'
-	print '6 - Exit'
+	print '5 - Search person on index'
+	print '6 - Search person on index'
+	print '7 - Exit'
 	option = ''
-	while option != '6':
+	while option != '7':
 		option = raw_input("Please enter the option: ")
 		if option == '1':
 			dll.insert_on_begin(read_person())
