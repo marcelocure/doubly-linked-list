@@ -286,6 +286,22 @@ class DoublyLinkedList(object):
 			print str(comparisons) + ' comparisons made'
 			comparisons = 0
 
+	def search(self, person_name):
+		self.aux = self.begin
+		found = False
+		comparisons = 0
+		print 'comparing'
+		while self.aux is not None:
+			comparisons = comparisons + 1
+			print 'comparing {0} to {1}'.format(self.aux.person.name, person_name)
+			if person_name == self.aux.person.name:
+				found = True
+				self.aux = None
+			else:
+				self.aux = self.aux.next
+		print '{0} comparisons made'.format(comparisons)
+	
+
 
 def read_person():
 	name = raw_input("Please enter the name")
@@ -342,6 +358,9 @@ def main():
 		if option == '5':
 			name = raw_input("Please enter the name to search: ")
 			dll.index.search(name)
+		if option == '6':
+			name = raw_input("Please enter the name to search: ")
+			dll.search(name)
 		dll.sort_list()
 	print 'Exit'
 
