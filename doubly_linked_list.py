@@ -66,10 +66,33 @@ class DoublyLinkedListIndex(object):
 		else:
 			self.aux = self.begin
 			while self.aux is not None:
-				print self.aux.main.prev.person
+				#print 'prev: '+self.aux.main.prev.person
 				print self.aux.main.person
-				print self.aux.main.next.person
+				#print 'next: '+self.aux.main.next.person
 				self.aux = self.aux.next
+
+	def search(self, person_name):
+		self.aux = self.begin
+		found = False
+		comparisons = 0
+		while self.aux is not None:
+			if self.aux.person.name > person_name:
+				print self.aux.person.name
+				print 'bigger'
+				comparisons = comparisons + 1
+				self.aux = self.aux.next
+			else:
+				print 'lower'
+				self.aux = self.aux.main
+				while not found or self.aux is not None:
+					print self.aux.person.name
+					comparisons = comparisons + 1
+					if self.aux.person.name != person_name:
+						self.aux = self.aux.next
+					elif self.aux.person.name == person_name:
+						found = True
+						self.aux = None
+
 
 
 class DoublyLinkedList(object):
@@ -77,6 +100,60 @@ class DoublyLinkedList(object):
 	end = None
 	aux = None
 	index = DoublyLinkedListIndex()
+
+	def sort_list(self):
+		self.show_list()
+		self.aux = self.begin
+		changed = False
+		while self.aux is not None:
+			print 'current'+self.aux.person.name
+			if self.aux.person.name == self.begin.person.name:
+				#print 'first'
+				if self.begin.next.person.name < self.begin.person.name:
+					changed = True
+					person = self.begin.person
+					self.begin.person = self.begin.next.person
+					self.begin.next.person = person
+			elif self.aux.person.name == self.end.person.name:
+				#print 'last'
+				if self.end.prev.person.name > self.end.person.name:
+					changed = True
+					person = self.end.person
+					self.end.person = self.end.prev.person
+					self.end.prev.person = person
+			else:
+				#print 'middle'
+				if self.aux.prev.person.name > self.aux.person.name:
+					#print '{0} is bigger than {1}'.format(self.aux.prev.person.name, self.aux.person.name)
+					person = self.aux.prev.person
+					self.aux.prev.person = self.aux.person
+					self.aux.person = person
+					changed = True
+				if self.aux.person.name > self.aux.next.person.name:
+					#print '{0} is bigger than {1}'.format(self.aux.person.name, self.aux.next.person.name)
+					person = self.aux.person
+					self.aux.person = self.aux.next.person
+					self.aux.next.person = person
+					changed = True
+				
+			if self.aux is not None:
+				self.aux = self.aux.next
+		self.show_list()
+		if changed:
+			self.sort_list()
+			
+
+	def insert(self, person):
+		if self.begin is not None:
+			print 'comparing {0} to {1}'.format(person.name, self.end.person.name)
+			if person.name > self.end.person.name:
+				print 'end'
+				self.insert_on_end(person)
+			if person.name < self.begin.person.name:
+				print 'begin'
+				self.insert_on_begin(person)
+		else:
+			self.insert_on_begin(person)
 
 
 	def insert_on_begin(self, person):
@@ -91,6 +168,7 @@ class DoublyLinkedList(object):
 			self.begin.prev = new
 			new.prev = None
 			self.begin = new
+
 		if new.person.name[:1] in ['e','j','o','t','z']:
 			self.index.insert_on_begin(self.begin.person, self.begin)
 
@@ -118,9 +196,9 @@ class DoublyLinkedList(object):
 			while self.aux is not None:
 				print self.aux.person
 				self.aux = self.aux.next
-		print '####INDEX####'
-		self.index.show_list()
-		print '####INDEX####'
+		#print '####INDEX####'
+		#self.index.show_list()
+		#print '####INDEX####'
 
 	def remove(self, name):
 		if self.begin is None:
@@ -182,6 +260,7 @@ def main():
 	print 'reading csv'
 	people = read_csv('C:\Temp\people.csv')
 	map(dll.insert_on_end, people)
+	dll.sort_list()
 	print 'done'
 
 	print '######### Menu #########'
@@ -189,19 +268,23 @@ def main():
 	print '2 - Insert in the end'
 	print '3 - Remove value'
 	print '4 - List entries'
-	print '5 - Exit'
+	print '5 - find person'
+	print '6 - Exit'
 	option = ''
-	while option != '5':
+	while option != '6':
 		option = raw_input("Please enter the option: ")
 		if option == '1':
 			dll.insert_on_begin(read_person())
 		if option == '2':
 			dll.insert_on_end(read_person())
 		if option == '3':
-			value = raw_input("Please enter the value to be removed: ")
+			value = raw_input("Please enter the name to be removed: ")
 			dll.remove(value)
 		if option == '4':
 			dll.show_list()
+		if option == '5':
+			name = raw_input("Please enter the name to search: ")
+			dll.index.search(name)
 	print 'Exit'
 
 if __name__ == '__main__':
