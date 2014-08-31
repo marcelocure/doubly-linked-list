@@ -102,35 +102,28 @@ class DoublyLinkedList(object):
 	index = DoublyLinkedListIndex()
 
 	def sort_list(self):
-		self.show_list()
 		self.aux = self.begin
 		changed = False
 		while self.aux is not None:
-			print 'current'+self.aux.person.name
 			if self.aux.person.name == self.begin.person.name:
-				#print 'first'
 				if self.begin.next.person.name < self.begin.person.name:
 					changed = True
 					person = self.begin.person
 					self.begin.person = self.begin.next.person
 					self.begin.next.person = person
 			elif self.aux.person.name == self.end.person.name:
-				#print 'last'
 				if self.end.prev.person.name > self.end.person.name:
 					changed = True
 					person = self.end.person
 					self.end.person = self.end.prev.person
 					self.end.prev.person = person
 			else:
-				#print 'middle'
 				if self.aux.prev.person.name > self.aux.person.name:
-					#print '{0} is bigger than {1}'.format(self.aux.prev.person.name, self.aux.person.name)
 					person = self.aux.prev.person
 					self.aux.prev.person = self.aux.person
 					self.aux.person = person
 					changed = True
 				if self.aux.person.name > self.aux.next.person.name:
-					#print '{0} is bigger than {1}'.format(self.aux.person.name, self.aux.next.person.name)
 					person = self.aux.person
 					self.aux.person = self.aux.next.person
 					self.aux.next.person = person
@@ -138,7 +131,6 @@ class DoublyLinkedList(object):
 				
 			if self.aux is not None:
 				self.aux = self.aux.next
-		self.show_list()
 		if changed:
 			self.sort_list()
 			
@@ -169,10 +161,7 @@ class DoublyLinkedList(object):
 			new.prev = None
 			self.begin = new
 
-		if new.person.name[:1] in ['e','j','o','t','z']:
-			self.index.insert_on_begin(self.begin.person, self.begin)
-
-	def insert_on_end(self, person):
+	def insert_on_end(self, person, update_index=True):
 		new = List(person=person)
 		if self.begin is None:
 			print 'empty'
@@ -185,8 +174,8 @@ class DoublyLinkedList(object):
 			new.prev = self.end
 			new.next = None
 			self.end = new
-		if new.person.name[:1] in ['e','j','o','t','z']:
-			self.index.insert_on_begin(self.end.person, self.end)
+		if update_index:
+			self.update_index()
 
 	def show_list(self):
 		if self.begin is None:
@@ -196,9 +185,20 @@ class DoublyLinkedList(object):
 			while self.aux is not None:
 				print self.aux.person
 				self.aux = self.aux.next
-		#print '####INDEX####'
-		#self.index.show_list()
-		#print '####INDEX####'
+		print '####INDEX####'
+		self.index.show_list()
+		print '####INDEX####'
+
+	def update_index(self):
+		if self.begin is None:
+			print 'empty list'
+		else:
+			self.aux = self.begin
+			while self.aux is not None:
+				print self.aux.person
+				if self.aux.person.name[:1] in ['e','j','o','t','z']:
+					self.index.insert_on_begin(self.aux.person, self.aux)
+				self.aux = self.aux.next
 
 	def remove(self, name):
 		if self.begin is None:
@@ -259,8 +259,9 @@ def main():
 	dll = DoublyLinkedList()
 	print 'reading csv'
 	people = read_csv('C:\Temp\people.csv')
-	map(dll.insert_on_end, people)
+	map(lambda person: dll.insert_on_end(person, False), people)
 	dll.sort_list()
+	dll.update_index()
 	print 'done'
 
 	print '######### Menu #########'
@@ -285,6 +286,7 @@ def main():
 		if option == '5':
 			name = raw_input("Please enter the name to search: ")
 			dll.index.search(name)
+		dll.sort_list()
 	print 'Exit'
 
 if __name__ == '__main__':
