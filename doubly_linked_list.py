@@ -1,3 +1,24 @@
+#inserida uma correcao na busca no indice e busca binaria
+
+class BinnarySearch(object):
+	comparisons = 0
+
+	def do(self, data_list, value_to_find):
+		self.comparisons = self.comparisons + 1
+		mid = self.get_middle_index(data_list)
+
+		print 'comparing {0} to {1}'.format(data_list[mid], value_to_find)
+		if data_list[mid] < value_to_find:
+			return self.do(data_list[mid:], value_to_find)
+		elif data_list[mid] > value_to_find:
+			return self.do(data_list[:mid], value_to_find)
+		print '{0} comparisons made'.format(self.comparisons)
+		return data_list[mid]
+
+	def get_middle_index(self, data_list):
+		return int(round(len(data_list)/2))
+
+
 class Person(object):
 	def __init__(self, name, address, phones):
 		self.name = name
@@ -107,7 +128,6 @@ class DoublyLinkedListIndex(object):
 						self.aux = self.aux.next
 				else:
 					self.aux = self.aux.next
-	
 
 	def contains_on_index(self, person):
 		self.aux = self.begin
@@ -134,6 +154,7 @@ class DoublyLinkedListIndex(object):
 				new.prev = None
 				self.begin = new
 			self.begin.main = main
+	
 	def show_list(self):
 		if self.begin is None:
 			print 'empty list'
@@ -141,28 +162,31 @@ class DoublyLinkedListIndex(object):
 			self.aux = self.begin
 			while self.aux is not None:
 				print self.aux.main.person
+				#print self.aux.person
 				self.aux = self.aux.next
 
 	def search(self, person_name):
 		self.aux = self.begin
 		found = False
 		comparisons = 0
-		#print 'comparing on index'
 		while self.aux is not None:
 			comparisons = comparisons + 1
 			if person_name > self.aux.person.name:
-				#print 'index value {0} is bigger than {1}'.format(self.aux.person.name, person_name)
+				print 'index value {0} is bigger than {1}'.format(self.aux.person.name, person_name)
 				self.aux = self.aux.next
 			else:
-				#print 'index value {0} is lower than {1}, going back one level'.format(self.aux.person.name, person_name)
-				main = self.aux.prev.main
+				print 'index value {0} is lower than {1}, going back one level'.format(self.aux.person.name, person_name)
+				if self.aux.prev is None:
+					main = self.aux.main
+				else:
+					main = self.aux.prev.main
 				self.aux = None
 
-		#print 'exit index'
-		#print 'searching on main list'
+		print 'exit index'
+		print 'searching on main list'
 		while main is not None:
 			comparisons = comparisons + 1
-			#print main.person.name
+			print 'comparing {0} to {1}'.format(main.person.name, person_name)
 			if main.person.name == person_name:
 				found = True
 				main = None
@@ -180,6 +204,7 @@ class DoublyLinkedList(object):
 	end = None
 	aux = None
 	index = DoublyLinkedListIndex()
+	list_not_linked = []
 
 	def sort_list(self):
 		self.aux = self.begin
@@ -241,6 +266,13 @@ class DoublyLinkedList(object):
 		self.index.show_list()
 		print '####INDEX####'
 
+	def update_list_not_linked(self):
+		self.list_not_linked = []
+		self.aux = self.begin
+		while self.aux is not None:
+			self.list_not_linked.append(self.aux.person.name)
+			self.aux = self.aux.next
+
 	def update_index(self):
 		self.index = DoublyLinkedListIndex()
 		if self.begin is None:
@@ -248,7 +280,7 @@ class DoublyLinkedList(object):
 		else:
 			self.aux = self.begin
 			while self.aux is not None:
-				if self.aux.person.name[:1] in ['e','j','o','t','z']:
+				if self.aux.person.name[:1] in ['a', 'e','j','o','t','z']:
 					self.index.insert(self.aux.person, self.aux)
 				self.aux = self.aux.next
 			self.index.sort_index()
@@ -289,10 +321,9 @@ class DoublyLinkedList(object):
 		self.aux = self.begin
 		found = False
 		comparisons = 0
-		#print 'comparing'
 		while self.aux is not None:
 			comparisons = comparisons + 1
-			#print 'comparing {0} to {1}'.format(self.aux.person.name, person_name)
+			print 'comparing {0} to {1}'.format(self.aux.person.name, person_name)
 			if person_name == self.aux.person.name:
 				found = True
 				self.aux = None
@@ -331,11 +362,13 @@ def read_csv(path):
 
 def main():
 	dll = DoublyLinkedList()
+	csv_path = raw_input("Enter csv file path: ")
 	print 'reading csv'
-	people = read_csv('C:\Temp\people.csv')
+	people = read_csv(csv_path)
 	map(lambda person: dll.insert(person, False), people)
 	dll.sort_list()
 	dll.update_index()
+	dll.update_list_not_linked()
 	print 'done'
 
 	print '######### Menu #########'
@@ -344,9 +377,10 @@ def main():
 	print '3 - List entries'
 	print '4 - Search person on index'
 	print '5 - Search person on list'
-	print '6 - Exit'
+	print '6 - Do a binnary Search on the list'
+	print '7 - Exit'
 	option = ''
-	while option != '6':
+	while option != '7':
 		option = raw_input("Please enter the option: ")
 		if option == '1':
 			dll.insert(read_person())
@@ -361,8 +395,14 @@ def main():
 		if option == '5':
 			name = raw_input("Please enter the name to search: ")
 			dll.search(name)
+		if option == '6':
+			name = raw_input("Please enter the name to search: ")
+			binnary_search = BinnarySearch()
+			binnary_search.do(data_list=dll.list_not_linked, value_to_find=name)
+
 		dll.sort_list()
 		dll.update_index()
+		dll.update_list_not_linked()
 	print 'Exit'
 
 if __name__ == '__main__':
